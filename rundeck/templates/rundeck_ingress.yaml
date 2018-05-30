@@ -1,0 +1,22 @@
+{{- if .Values.HostName }}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+{{- if .Values.Ingress.Annotations }}
+  annotations:
+{{ toYaml .Values.Ingress.Annotations | indent 4 }}
+{{- end }}
+  name: {{ template "rundeck.fullname" . }}
+spec:
+  rules:
+  - host: {{ .Values.HostName | quote }}
+    http:
+      paths:
+      - backend:
+          serviceName: {{ template "rundeck.fullname" . }}
+          servicePort: {{ .Values.ServicePort }}
+{{- if .Values.Ingress.TLS }}
+  tls:
+{{ toYaml .Values.Ingress.TLS | indent 4 }}
+{{- end -}}
+{{- end }}

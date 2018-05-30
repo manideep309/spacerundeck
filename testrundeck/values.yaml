@@ -1,0 +1,57 @@
+# Default values for testrundeck.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+namespace:
+  name: spacerundeck
+ 
+#servicePort: 4440
+
+image:
+  repository: 162790430163.dkr.ecr.us-east-1.amazonaws.com/docker_rundeck
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  name: rundeck
+  type: ClusterIP
+  port: 4440
+
+ServicePort: ClusterIP
+LoadBalancerSourceRanges: {}
+
+ServiceType: ClusterIP
+ingress:
+  enabled: true
+  path: /
+  hosts: 
+    - rundeck.iad1.sre.aspect-cloud.net
+  annotations:
+      certmanager.k8s.io/acme-challenge-type: dns01
+      certmanager.k8s.io/acme-dns01-provider: route53
+      kubernetes.io/tls-acme: "true"
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/whitelist-source-range: "65.196.174.119/32,216.6.210.1/32,216.6.210.37/32,66.193.54.0/24,52.2.42.152/32,52.20.96.17/32,34.192.254.186/32,34.204.102.208/32,54.86.20.226/32,34.193.175.144/32,34.233.96.142/32,35.169.213.113/32,62.189.33.200/32"
+  tls: 
+    - secretName: rundeck.iad1.sre.aspect-cloud.net
+      hosts:
+        - rundeck.iad1.sre.aspect-cloud.net
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #  cpu: 100m
+  #  memory: 128Mi
+  # requests:
+  #  cpu: 100m
+  #  memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

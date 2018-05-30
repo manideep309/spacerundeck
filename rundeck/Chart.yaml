@@ -1,0 +1,4 @@
+apiVersion: v1						
+description: A Helm chart for rundeck		      
+name: rundeck
+version: 0.1.0

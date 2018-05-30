@@ -1,0 +1,47 @@
+# Default values for rundeck.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+labels:
+  team: sre
+namespace: development
+replicaCount: 1
+image:
+  repository: 162790430163.dkr.ecr.us-east-1.amazonaws.com/docker_rundeck
+  tag: latest
+  pullPolicy: IfNotPresent
+probe:
+  liveness:
+    initialDelaySeconds: 30
+  readiness:
+    initialDelaySeconds: 15
+service:
+  name: rundeck
+  type: ClusterIP
+  externalPort: 4440
+  internalPort: 4440
+hpa:							      
+  maxReplicas: 3					      
+  minReplicas: 2
+  targetCPUUtilizationPercentage: 80    
+HostName: rundeck.ops.id.aspect-cloud.net
+ServicePort: 4440
+Ingress:
+    Annotations:
+      ingress.kubernetes.io/ssl-redirect: "true"
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/whitelist-source-range: "65.196.174.119/32,216.6.210.1/32,216.6.210.37/32,66.193.54.0/24,52.2.42.152/32,52.20.96.17/32,34.192.254.186/32,34.204.102.208/32,54.86.20.226/32,34.193.175.144/32,34.233.96.142/32,35.169.213.113/32,62.189.33.200/32"
+    TLS:
+    - secretName: rundeck.ops.id.aspect-cloud.net
+      hosts:
+          - rundeck.ops.id.aspect-cloud.net
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #  cpu: 100m
+  #  memory: 128Mi
+  # requests:
+  #  cpu: 100m
+  #  memory: 128Mi

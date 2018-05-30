@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "testrundeck.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ template "testrundeck.name" . }}
+    chart: {{ template "testrundeck.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.port }}
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ template "testrundeck.name" . }}
+    release: {{ .Release.Name }}
+  type: {{.Values.ServiceType}}
+  {{if eq .Values.ServiceType "LoadBalancer"}}
+  loadBalancerSourceRanges: {{.Values.LoadBalancerSourceRanges}}
+  {{if .Values.LoadBalancerIP}}
+  loadBalancerIP: {{.Values.LoadBalancerIP}}
+  {{end}}
+  {{end}}
