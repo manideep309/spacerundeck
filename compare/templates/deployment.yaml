@@ -1,0 +1,41 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "compare.fullname" . }}
+  labels:
+    app: rundeck  
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:  
+  replicas: {{ .Values.replicaCount }}
+  template:
+    metadata:
+      labels:
+        release: {{ .Release.Name }}
+        team: {{ .Values.team }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.internalPort }}
+          livenessProbe:
+              initialDelaySeconds: 120
+              tcpSocket:
+                  port: {{ .Values.service.internalPort }}
+          readinessProbe:
+              initialDelaySeconds: 120
+              tcpSocket:
+                  port: {{ .Values.service.internalPort }}
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- if .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+    {{- end }}
+    {{- if .Values.tolerations }}
+      tolerations:
+{{ toYaml .Values.tolerations | indent 8 -}}
+    {{- end }}
